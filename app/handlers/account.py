@@ -1,7 +1,6 @@
 from aiogram import Router, types
-from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from magic_filter import F
+from aiogram import F
 
 from ..service.account import Profile
 from ..service.exc import ProfileAlreadyExist
@@ -10,7 +9,6 @@ from ..states.account import RegisterState
 router = Router()
 
 
-@router.message(Command("reg"))
 @router.callback_query(F.data == "register")
 async def start_register(callback: types.CallbackQuery, state: FSMContext):
     if await Profile.exist(callback.from_user.id):

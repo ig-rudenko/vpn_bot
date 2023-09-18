@@ -1,6 +1,6 @@
 import asyncio
 
-from app.handlers import welcome, account
+from app.handlers import welcome, account, utils
 from database.connection import db
 from settings import bot, dp
 
@@ -10,6 +10,7 @@ async def main():
     dp.include_routers(
         welcome.router,
         account.router,
+        utils.router,
     )
 
     # ==== Init Database ====

@@ -5,3 +5,7 @@ class ProfileException(Exception):
 
 class ProfileAlreadyExist(ProfileException):
     pass
+
+
+class ProfileDataInvalid(ProfileException):
+    pass

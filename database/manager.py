@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar, Sequence
 
-from sqlalchemy import select
+from sqlalchemy import select, update as sqlalchemy_update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload, load_only
 
@@ -46,6 +46,18 @@ class Manager(Generic[T]):
             await session.commit()
             await session.refresh(obj)  # Получить ID созданного объекта
         return obj
+
+    async def update(self, **kwargs) -> None:
+        """
+        # Обновляет текущий объект.
+        :param kwargs: Поля и значения, которые надо поменять.
+        """
+
+        async with db.session() as session:
+            await session.execute(
+                sqlalchemy_update(self.__class__), [{"id": self.id, **kwargs}]
+            )
+            await session.commit()
 
     @classmethod
     async def all(

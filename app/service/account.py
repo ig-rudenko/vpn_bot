@@ -1,19 +1,17 @@
 from datetime import datetime
 
-from aiogram.types import User as TGUser
-
-from ..models import User
-from .exc import ProfileAlreadyExist
+from ..models import User, Profile
+from .exc import ProfileAlreadyExist, ProfileDataInvalid
 
 
-class Profile:
-    def __init__(self, tg_user: TGUser = None):
-        self.tg_user: TGUser | None = tg_user
+class ProfileService:
+    def __init__(self, tg_id: int):
+        self.tg_id = tg_id
 
     @staticmethod
     async def username_is_available(username: str) -> bool:
         try:
-            await User.get(profile_username=username)
+            await Profile.get(username=username)
             return False
         except User.DoesNotExists:
             return True
@@ -21,23 +19,31 @@ class Profile:
     @staticmethod
     async def exist(tg_id: int) -> bool:
         try:
-            await User.get(tg_id=tg_id)
-            return True
+            user = await User.get(tg_id=tg_id)
+            return user.profile is not None
         except User.DoesNotExists:
             return False
 
-    async def create(self, username: str, password: str) -> User:
+    async def create(self, username: str, password: str) -> Profile:
         if not await self.username_is_available(username=username):
             raise ProfileAlreadyExist("Данный username уже занят")
-        if await self.exist(tg_id=self.tg_user.id):
+        if await self.exist(tg_id=self.tg_id):
             raise ProfileAlreadyExist("Вы уже зарегистрированы")
 
-        return await User.create(
-            profile_username=username,
-            profile_password=password,
-            date_joined=datetime.now(),
-            tg_id=self.tg_user.id,
-            tg_username=self.tg_user.username,
-            first_name=self.tg_user.first_name,
-            last_name=self.tg_user.last_name,
+        profile = await Profile.create(
+            username=username, password=password, date_joined=datetime.now()
         )
+        await self.set_profile_to_tg_user(profile, tg_id=self.tg_id)
+        return profile
+
+    @staticmethod
+    async def set_profile_to_tg_user(profile: Profile, tg_id: int):
+        user = await User.get(tg_id=tg_id)
+        await user.update(profile=profile.id)
+
+    @staticmethod
+    async def get(username: str, password: str) -> Profile:
+        try:
+            return await Profile.get(username=username, password=password)
+        except Profile.DoesNotExists:
+            raise ProfileDataInvalid("Неверный пароль!")

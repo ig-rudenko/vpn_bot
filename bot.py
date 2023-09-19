@@ -1,6 +1,6 @@
 import asyncio
 
-from app.handlers import welcome, account, utils
+from app.handlers import welcome, account, utils, vpn
 from database.connection import db
 from settings import bot, dp
 
@@ -11,6 +11,7 @@ async def main():
         welcome.router,
         account.router,
         utils.router,
+        vpn.router,
     )
 
     # ==== Init Database ====

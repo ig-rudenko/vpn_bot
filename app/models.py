@@ -16,6 +16,16 @@ from database.connection import db
 from database.manager import Manager
 
 
+class VPNConnection(Base, Manager):
+    __tablename__ = "vpn_connection"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    uuid = Column(String(36), nullable=False)
+    is_active = Column(Boolean(), nullable=False, default=True)
+    profile = Column(ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False)
+    available_to = Column(DateTime(), nullable=False)
+
+
 class Profile(Base, Manager):
     __tablename__ = "profiles"
 

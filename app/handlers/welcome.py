@@ -21,6 +21,12 @@ async def get_keyboard(tg_id: int) -> types.InlineKeyboardMarkup:
                 callback_data="register",
             ),
         )
+    builder.row(
+        types.InlineKeyboardButton(
+            text="Выбрать подключение",
+            callback_data="tariff_selection",
+        )
+    )
 
     return builder.as_markup()
 

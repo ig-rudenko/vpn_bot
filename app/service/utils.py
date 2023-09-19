@@ -1,6 +1,11 @@
+import io
 import re
 
 import aiohttp
+import qrcode
+from qrcode.image.styledpil import StyledPilImage
+from qrcode.image.styles.colormasks import VerticalGradiantColorMask
+from PIL.Image import Image
 
 
 class CheckURLAvailability:
@@ -26,3 +31,14 @@ class CheckURLAvailability:
                 resp = await session.get(self._validate_url(self._url))
                 resp.close()
                 return resp.status
+
+
+def generate_qr_code(data: str) -> bytes:
+    qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_L)
+    qr.add_data(data)
+    image: Image = qr.make_image(
+        image_factory=StyledPilImage, color_mask=VerticalGradiantColorMask()
+    ).get_image()
+    image_data = io.BytesIO()
+    image.save(image_data, format="PNG")
+    return image_data.getvalue()

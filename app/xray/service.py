@@ -1,4 +1,5 @@
 import asyncio
+import json
 import re
 import subprocess
 
@@ -11,6 +12,19 @@ class _XRAYService:
 
     async def restart(self):
         await self._run_command("systemctl restart xray.service")
+
+    async def get_user_traffic(self, username: str) -> dict:
+        rc, stdout, stderr = await self._run_command(
+            f"xray api statsquery --server=127.0.0.1:10085 -pattern '{username}' | jq .stat"
+        )
+        raw_data = json.loads(stdout or "[]")
+        data = {}
+        for part in raw_data:
+            if part["name"].endswith("uplink"):
+                data["uplink"] = part["value"]
+            if part["name"].endswith("downlink"):
+                data["downlink"] = part["value"]
+        return data
 
     async def check_status(self):
         self._rc, self._stdout, self._stderr = await self._run_command(
@@ -35,7 +49,11 @@ class _XRAYService:
         # Ждем завершения подпроцесса и получаем результат
         stdout, stderr = await process.communicate()
         # Возвращаем код выхода, стандартный вывод и стандартный вывод ошибок
-        return process.returncode, stdout.decode(errors="ignore"), stderr.decode(errors="ignore")
+        return (
+            process.returncode,
+            stdout.decode(errors="ignore"),
+            stderr.decode(errors="ignore"),
+        )
 
 
 xray_service = _XRAYService()

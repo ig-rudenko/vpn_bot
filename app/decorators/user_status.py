@@ -10,6 +10,7 @@ async def _answer_text(request: Message | CallbackQuery, text: str):
         await request.answer(text)
     elif isinstance(request, CallbackQuery):
         await request.message.answer(text)
+        await request.answer()
 
 
 def register_required(handler):

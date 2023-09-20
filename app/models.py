@@ -23,6 +23,7 @@ class VPNConnection(Base, Manager):
     uuid = Column(String(36), nullable=False)
     is_active = Column(Boolean(), nullable=False, default=True)
     profile = Column(ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False)
+    created_datetime = Column(DateTime(), nullable=False, default=datetime.now)
     available_to = Column(DateTime(), nullable=False)
 
 
@@ -34,6 +35,7 @@ class Profile(Base, Manager):
     password = Column(String(128), nullable=True)
     date_joined = Column(DateTime(), nullable=False)
     phone = Column(String(20), nullable=True)
+    trial_count = Column(Integer(), nullable=False, default=1)
 
 
 class User(Base, Manager):

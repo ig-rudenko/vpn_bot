@@ -1,4 +1,5 @@
 import json
+import os
 import pathlib
 from typing import Literal
 from uuid import UUID
@@ -76,3 +77,6 @@ class JSONConfigFormatter:
     @staticmethod
     def to_write(config: Config) -> str:
         return json.dumps(config.data, indent=4)
+
+
+config_reader_writer = ConfigReaderWriter(pathlib.Path(os.getenv("XRAY_CONFIG_PATH")))

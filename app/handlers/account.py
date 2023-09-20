@@ -5,6 +5,7 @@ from aiogram import F
 from ..service.account import ProfileService
 from ..service.exc import ProfileAlreadyExist, ProfileDataInvalid
 from ..states.account import RegisterState, LoginState
+from .welcome import get_welcome_keyboard
 
 router = Router()
 
@@ -53,7 +54,10 @@ async def set_password(message: types.Message, state: FSMContext):
             await message.answer("Укажите username заново")
             await state.set_state(RegisterState.username)
         else:
-            await message.answer("Вы были успешно зарегистрированы")
+            await message.answer(
+                "Вы были успешно зарегистрированы",
+                reply_markup=await get_welcome_keyboard(message.from_user.id),
+            )
 
         await state.clear()
 
@@ -101,6 +105,9 @@ async def set_password(message: types.Message, state: FSMContext):
         await state.set_state(LoginState.password)
         return
     else:
-        await message.answer("Вы успешно вошли в учетную запись")
+        await message.answer(
+            "Вы успешно вошли в учетную запись",
+            reply_markup=await get_welcome_keyboard(message.from_user.id),
+        )
 
     await state.clear()

@@ -6,6 +6,7 @@ from aiohttp import ClientConnectorError, InvalidURL
 from ..decorators.limiter import rate_limit
 from ..service.utils import CheckURLAvailability
 from ..states.utils import CheckURLState
+from .welcome import get_welcome_keyboard
 
 router = Router()
 
@@ -42,5 +43,7 @@ async def run_url_checker(message: types.Message, state: FSMContext):
             )
     if status:
         text += f"\nСтатус: {status}"
-    await message.answer(text)
+    await message.answer(
+        text, reply_markup=await get_welcome_keyboard(message.from_user.id)
+    )
     await state.clear()

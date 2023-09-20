@@ -55,6 +55,7 @@ class ConfigReaderWriter:
             return ""
         if isinstance(self._config, bytes):
             return self._config.decode()
+        return self._config
 
     async def read(self, mode: Literal["r", "rb"] = "r") -> None:
         async with aiofiles.open(self._path, mode) as file:

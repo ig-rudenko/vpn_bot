@@ -7,23 +7,18 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from ..decorators.user_status import register_required
 from ..service.utils import generate_qr_code
 from ..service.vpn import VPNConnectionService
-from ..models import User, Profile
+from ..helpers import get_user
+from ..models import User
 from .welcome import get_welcome_keyboard
+from ..text import VPN_CONNECTION_ATTENTION
 
 router = Router()
-
-
-async def get_user(tg_id: int) -> User:
-    user = await User.get(tg_id=tg_id)
-    profile = await Profile.get(id=user.profile)
-    user.profile = profile
-    return user
 
 
 async def check_trial(user: User, callback: types.CallbackQuery) -> bool:
     if user.profile.trial_count < 1:
         keyboard = await get_welcome_keyboard(callback.from_user.id)
-        await callback.message.answer(
+        await callback.message.edit_text(
             "У вас закончились пробные подключения", reply_markup=keyboard
         )
         await callback.answer()
@@ -42,19 +37,22 @@ async def tariff_selection(callback: types.CallbackQuery):
         ),
         types.InlineKeyboardButton(
             text="Платная версия",
-            callback_data="register",
+            callback_data="tariff_selection:paid:info",
         ),
     )
-    await callback.message.answer(
+    await callback.message.edit_text(
         "Выберите тариф для подключения",
         reply_markup=builder.as_markup(),
     )
     await callback.answer()
 
 
+# ======================= Пробное подключение =====================
+
+
 @router.callback_query(F.data == "tariff_selection:trial:info")
 @register_required
-async def tariff_selection(callback: types.CallbackQuery):
+async def tariff_selection_trial_info(callback: types.CallbackQuery):
     user = await get_user(callback.from_user.id)
 
     if not await check_trial(user, callback):
@@ -80,7 +78,7 @@ async def tariff_selection(callback: types.CallbackQuery):
 
 @router.callback_query(F.data == "tariff_selection:trial:get")
 @register_required
-async def tariff_selection(callback: types.CallbackQuery):
+async def tariff_selection_trial_get(callback: types.CallbackQuery):
     user = await get_user(callback.from_user.id)
 
     if not await check_trial(user, callback):
@@ -100,5 +98,29 @@ async def tariff_selection(callback: types.CallbackQuery):
         photo=image,
         caption=f"Подключение было создано\n\n<code>{connection_str}</code>",
         parse_mode="HTML",
+    )
+    await callback.message.answer(
+        VPN_CONNECTION_ATTENTION,
+        reply_markup=await get_welcome_keyboard(callback.from_user.id),
+    )
+    await callback.answer()
+
+
+# ======================= ПЛАТНЫЕ ============================
+
+
+@router.callback_query(F.data == "tariff_selection:paid:info")
+@register_required
+async def tariff_selection_paid_info(callback: types.CallbackQuery):
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        types.InlineKeyboardButton(
+            text="Назад",
+            callback_data="tariff_selection",
+        ),
+    )
+    await callback.message.edit_text(
+        "В данный момент доступны только пробные версии",
+        reply_markup=builder.as_markup(),
     )
     await callback.answer()

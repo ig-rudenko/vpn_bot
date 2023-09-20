@@ -32,7 +32,10 @@ class VPNConnectionService:
         )
 
         await VPNConnection.create(
-            uuid=str(user_uuid), profile=profile.id, available_to=available_to
+            uuid=str(user_uuid),
+            profile=profile.id,
+            available_to=available_to,
+            username=username,
         )
         # await xray_service.reload()
         return new_connection_string

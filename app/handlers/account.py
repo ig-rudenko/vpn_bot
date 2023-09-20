@@ -58,6 +58,9 @@ async def set_password(message: types.Message, state: FSMContext):
         await state.clear()
 
 
+# ================ LOGIN ==================
+
+
 @router.callback_query(F.data == "login")
 async def start_register(callback: types.CallbackQuery, state: FSMContext):
     if await ProfileService.exist(callback.from_user.id):

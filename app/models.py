@@ -21,6 +21,7 @@ class VPNConnection(Base, Manager):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     uuid = Column(String(36), nullable=False)
+    username = Column(String(128), nullable=False)
     is_active = Column(Boolean(), nullable=False, default=True)
     profile = Column(ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False)
     created_datetime = Column(DateTime(), nullable=False, default=datetime.now)

@@ -1,5 +1,15 @@
 ## Запуск
 
+Создаем файл `/etc/sysconfig/tg_bot`:
+
+```ini
+TG_TOKEN={token}
+XRAY_SERVER_IP={ip}
+XRAY_PUBLIC_KEY={key}
+XRAY_SHORT_ID={sid}
+XRAY_CONFIG_PATH={path_to_xray_config.json}
+```
+
 Необходимо создать сервис со следующим содержимым:
 
 ```ini
@@ -9,11 +19,7 @@ After=syslog.target
 After=network.target
 
 [Service]
-Environment="TG_TOKEN={token}"
-Environment="XRAY_SERVER_IP={ip}"
-Environment="XRAY_PUBLIC_KEY={key}"
-Environment="XRAY_SHORT_ID={sid}"
-Environment="XRAY_CONFIG_PATH={path_to_xray_config.json}"
+EnvironmentFile=/etc/sysconfig/tg_bot
 
 Type=simple
 WorkingDirectory={path_to_vpn_bot}

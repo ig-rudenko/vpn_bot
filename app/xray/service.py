@@ -10,7 +10,7 @@ class _XRAYService:
         self._stderr = ""
 
     async def reload(self):
-        await self._run_command("systemctl reload xray.service")
+        await self._run_command("systemctl restart xray.service")
 
     async def check_status(self):
         self._rc, self._stdout, self._stderr = await self._run_command(

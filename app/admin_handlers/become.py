@@ -2,7 +2,7 @@ import os
 from hmac import compare_digest
 
 from aiogram import types
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.filters import Command
 
 from app.models import User
@@ -16,7 +16,13 @@ async def become_admin(message: types.Message):
     _, token = message.text.split()
     user = await User.get_or_create(message.from_user)
 
-    if compare_digest(token, os.getenv("BECOME_TOKEN")):
+    if user.is_superuser:
+        await message.answer(
+            "Вы уже суперпользователь",
+            reply_markup=await get_welcome_keyboard(user),
+        )
+
+    elif compare_digest(token, os.getenv("BECOME_TOKEN")):
         user.is_superuser = True
         await user.update(is_superuser=True)
         await message.answer(

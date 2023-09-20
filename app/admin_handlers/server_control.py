@@ -43,7 +43,7 @@ def get_memory() -> str:
         mem_percent = mem.percent  # Процент использования оперативной памяти
 
         return (
-            f"{get_icon(mem_percent)} Нагрузка оперативной памяти: {mem_percent}%"
+            f"{get_icon(mem_percent)} RAM: {mem_percent}%"
             f" ({format_bytes(mem_used)} из {format_bytes(mem_total)} байт)"
         )
 
@@ -59,7 +59,7 @@ def get_swap() -> str:
         swap_used = swap.used  # Использованный объем swap в байтах
         swap_percent = swap.percent  # Процент использования swap
         return (
-            f"{get_icon(swap_percent)} Swap: {swap_percent}% "
+            f"{get_icon(swap_percent)} SWAP: {swap_percent}% "
             f"({format_bytes(swap_used)} из {format_bytes(swap_total)} байт)"
         )
 
@@ -76,7 +76,7 @@ def get_disk_usage() -> str:
         disk_used = disk.used  # Использованный объем дискового пространства в байтах
         disk_percent = disk.percent  # Процент использования дискового пространства
         return (
-            f"{get_icon(disk_percent)} Место на диске: {disk_percent}% "
+            f"{get_icon(disk_percent)} DISK: {disk_percent}% "
             f"({format_bytes(disk_used)} из {format_bytes(disk_total)} байт)"
         )
 
@@ -90,8 +90,10 @@ async def server_control(callback: types.CallbackQuery):
     cpu_percent = psutil.cpu_percent(interval=1)
     status = (
         f"{get_swap()}\n{get_memory()}\n{get_disk_usage()}\n"
-        f"{get_icon(cpu_percent)} Нагрузка CPU: {cpu_percent}%"
+        f"{get_icon(cpu_percent)} CPU: {cpu_percent}%"
     )
 
-    await callback.message.edit_text(status, reply_markup=await get_welcome_keyboard(user))
+    await callback.message.edit_text(
+        status, reply_markup=await get_welcome_keyboard(user)
+    )
     await callback.answer()

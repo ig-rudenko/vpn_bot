@@ -15,7 +15,7 @@ router = Router()
 
 async def check_trial(user: User, callback: types.CallbackQuery) -> bool:
     if user.trial_count < 1:
-        keyboard = await get_welcome_keyboard(callback.from_user)
+        keyboard = await get_welcome_keyboard(user)
         await callback.message.edit_text(
             "У вас закончились пробные подключения", reply_markup=keyboard
         )
@@ -96,7 +96,7 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
     )
     await callback.message.answer(
         VPN_CONNECTION_ATTENTION,
-        reply_markup=await get_welcome_keyboard(callback.from_user),
+        reply_markup=await get_welcome_keyboard(user),
     )
     await callback.answer()
 

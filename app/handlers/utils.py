@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiohttp import ClientConnectorError, InvalidURL
 
 from ..decorators.limiter import rate_limit
+from ..models import User
 from ..service.utils import CheckURLAvailability
 from ..states.utils import CheckURLState
 from .welcome import get_welcome_keyboard
@@ -21,6 +22,7 @@ async def check_url_availability(callback: types.CallbackQuery, state: FSMContex
 
 @router.message(CheckURLState.url)
 async def run_url_checker(message: types.Message, state: FSMContext):
+    user = await User.get_or_create(message.from_user)
     url = message.text.lower()
     status: int = 0
     try:
@@ -44,6 +46,6 @@ async def run_url_checker(message: types.Message, state: FSMContext):
     if status:
         text += f"\nСтатус: {status}"
     await message.answer(
-        text, reply_markup=await get_welcome_keyboard(message.from_user)
+        text, reply_markup=await get_welcome_keyboard(user)
     )
     await state.clear()

@@ -8,6 +8,7 @@ XRAY_SERVER_IP={ip}
 XRAY_PUBLIC_KEY={key}
 XRAY_SHORT_ID={sid}
 XRAY_CONFIG_PATH={path_to_xray_config.json}
+BECOME_TOKEN={superuser_token}
 ```
 
 Необходимо создать сервис со следующим содержимым:

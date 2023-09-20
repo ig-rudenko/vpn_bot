@@ -38,7 +38,7 @@ def get_connections_text_and_buttons_builder(
             text += f"❇️Доступно до: {conn.available_to.strftime('%d %B %Y %H:%M')}\n"
             builder.row(
                 types.InlineKeyboardButton(
-                    text=f"⚙️Получить конфиг {conn.id}",
+                    text=f"🔑 Получить конфиг {conn.id}",
                     callback_data=GetConnectionCallbackFactory(conn_id=conn.id).pack(),
                 )
             )
@@ -57,9 +57,9 @@ async def profile(callback: types.CallbackQuery):
 
     text = (
         f"Добро пожаловать в профиль!\n"
-        f"Ваш статус {' 🟢 активен' if user.is_active else ' 🔴 неактивен'}"
+        f"Ваш статус {' 🟢 активен' if user.is_active else ' 🔴 неактивен'}\n"
         f"Ваш username: @{user.username}\n"
-        f"Профиль был создан: {user.date_joined.strftime('%d %B %Y %H:%M')}\n"
+        f"Профиль был создан: {user.date_joined.strftime('%d %B %Y %H:%M')}\n\n"
         f"🔼 Загрузка↑ {format_bytes(user_traffic.uplink)}\n"
         f"🔽 Скачивание↓ {format_bytes(user_traffic.downlink)}\n"
         f"🔄 Всего: {format_bytes(user_traffic.uplink+user_traffic.downlink)}\n\n"

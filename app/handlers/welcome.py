@@ -38,6 +38,12 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
             callback_data="utils:url_check",
         )
     )
+    builder.row(
+        types.InlineKeyboardButton(
+            text="ℹ️ Помощь в установке",
+            callback_data="install:info",
+        )
+    )
     return builder.as_markup()
 
 

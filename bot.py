@@ -1,6 +1,6 @@
 import asyncio
 
-from app.handlers import welcome, utils, vpn, profile
+from app.handlers import welcome, utils, vpn, profile, install_info
 from app.admin_handlers import become, xray_control, server_control
 from database.connection import db
 from settings import bot, dp
@@ -10,6 +10,7 @@ async def main():
     # ==== Routers =====
     dp.include_routers(
         welcome.router,
+        install_info.router,
         profile.router,
         utils.router,
         vpn.router,

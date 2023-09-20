@@ -5,10 +5,11 @@ from aiogram import F
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from ..service.utils import generate_qr_code
-from ..text import VPN_CONNECTION_ATTENTION
-from ..xray.generator import xray_connection_maker
-from ..models import VPNConnection, User
+from app.service.utils import generate_qr_code, format_bytes
+from app.text import VPN_CONNECTION_ATTENTION
+from app.xray.generator import xray_connection_maker
+from app.xray.service import xray_service
+from app.models import VPNConnection, User
 
 
 router = Router()
@@ -52,10 +53,16 @@ def get_connections_text_and_buttons_builder(
 async def profile(callback: types.CallbackQuery):
     user = await User.get_or_create(callback.from_user)
 
+    user_traffic = await xray_service.get_user_traffic(user.username)
+
     text = (
         f"Добро пожаловать в профиль!\n"
-        f"Ваш username: {user.username}\n"
-        f"Профиль был создан: {user.date_joined.strftime('%d %B %Y %H:%M')}\n\n"
+        f"Ваш статус {' 🟢 активен' if user.is_active else ' 🔴 неактивен'}"
+        f"Ваш username: @{user.username}\n"
+        f"Профиль был создан: {user.date_joined.strftime('%d %B %Y %H:%M')}\n"
+        f"🔼 Загрузка↑ {format_bytes(user_traffic.uplink)}\n"
+        f"🔽 Скачивание↓ {format_bytes(user_traffic.downlink)}\n"
+        f"🔄 Всего: {format_bytes(user_traffic.uplink+user_traffic.downlink)}\n\n"
     )
 
     connection = await VPNConnection.filter(tg_id=user.tg_id)

@@ -2,6 +2,13 @@ import asyncio
 import json
 import re
 import subprocess
+from dataclasses import dataclass
+
+
+@dataclass
+class UserTraffic:
+    uplink: str = ""
+    downlink: str = ""
 
 
 class _XRAYService:
@@ -13,18 +20,18 @@ class _XRAYService:
     async def restart(self):
         await self._run_command("systemctl restart xray.service")
 
-    async def get_user_traffic(self, username: str) -> dict:
+    async def get_user_traffic(self, username: str) -> UserTraffic:
         rc, stdout, stderr = await self._run_command(
             f"xray api statsquery --server=127.0.0.1:10085 -pattern '{username}' | jq .stat"
         )
         raw_data = json.loads(stdout or "[]")
-        data = {}
+        traffic = UserTraffic()
         for part in raw_data:
             if part["name"].endswith("uplink"):
-                data["uplink"] = part["value"]
+                traffic.uplink = part["value"]
             if part["name"].endswith("downlink"):
-                data["downlink"] = part["value"]
-        return data
+                traffic.downlink = part["value"]
+        return traffic
 
     async def check_status(self):
         self._rc, self._stdout, self._stderr = await self._run_command(

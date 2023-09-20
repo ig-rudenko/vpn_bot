@@ -4,20 +4,11 @@ import psutil
 from aiogram import types, Router, F
 from ..decorators.user_status import superuser_required
 
-from ..models import User
+from app.models import User
 from app.handlers.welcome import get_welcome_keyboard
+from app.service.utils import format_bytes
 
 router = Router()
-
-
-def format_bytes(size: int) -> str:
-    power = 2**10
-    n = 0
-    power_labels = {0: "", 1: "K", 2: "M", 3: "G", 4: "T"}
-    while size > power:
-        size /= power
-        n += 1
-    return f"{size:.2f} {power_labels[n]}B"
 
 
 def get_icon(percent):

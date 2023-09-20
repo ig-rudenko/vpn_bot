@@ -7,8 +7,8 @@ from dataclasses import dataclass
 
 @dataclass
 class UserTraffic:
-    uplink: str = ""
-    downlink: str = ""
+    uplink: int = 0
+    downlink: int = 0
 
 
 class _XRAYService:
@@ -28,9 +28,9 @@ class _XRAYService:
         traffic = UserTraffic()
         for part in raw_data:
             if part["name"].endswith("uplink"):
-                traffic.uplink = part["value"]
+                traffic.uplink = int(part["value"])
             if part["name"].endswith("downlink"):
-                traffic.downlink = part["value"]
+                traffic.downlink = int(part["value"])
         return traffic
 
     async def check_status(self):

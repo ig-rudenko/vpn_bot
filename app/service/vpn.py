@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Sequence
 from uuid import uuid4
 
-from ..models import VPNConnection, Profile
+from ..models import VPNConnection
 from ..xray.service import xray_service
 from ..xray.generator import xray_connection_maker
 from ..xray.config import config_reader_writer, JSONConfigFormatter
@@ -11,7 +11,7 @@ from ..xray.config import config_reader_writer, JSONConfigFormatter
 class VPNConnectionService:
     @staticmethod
     async def create_new_connection(
-        profile: Profile, username: str, available_to: datetime
+        tg_id: int, username: str, available_to: datetime
     ) -> str:
         user_uuid = uuid4()
         await config_reader_writer.read()
@@ -28,7 +28,7 @@ class VPNConnectionService:
 
         await VPNConnection.create(
             uuid=str(user_uuid),
-            profile=profile.id,
+            tg_id=tg_id,
             available_to=available_to,
             username=username,
         )
@@ -36,5 +36,5 @@ class VPNConnectionService:
         return new_connection_string
 
     @staticmethod
-    async def get_connections(profile: Profile) -> Sequence[VPNConnection]:
-        return await VPNConnection.filter(profile=profile.id)
+    async def get_connections(tg_id: int) -> Sequence[VPNConnection]:
+        return await VPNConnection.filter(tg_id=tg_id)

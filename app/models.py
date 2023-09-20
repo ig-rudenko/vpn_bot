@@ -23,20 +23,9 @@ class VPNConnection(Base, Manager):
     uuid = Column(String(36), nullable=False)
     username = Column(String(128), nullable=False)
     is_active = Column(Boolean(), nullable=False, default=True)
-    profile = Column(ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False)
+    tg_id = Column(ForeignKey("users.tg_id", ondelete="CASCADE"), nullable=False)
     created_datetime = Column(DateTime(), nullable=False, default=datetime.now)
     available_to = Column(DateTime(), nullable=False)
-
-
-class Profile(Base, Manager):
-    __tablename__ = "profiles"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(String(128), nullable=True, unique=True)
-    password = Column(String(128), nullable=True)
-    date_joined = Column(DateTime(), nullable=False)
-    phone = Column(String(20), nullable=True)
-    trial_count = Column(Integer(), nullable=False, default=1)
 
 
 class User(Base, Manager):
@@ -49,7 +38,7 @@ class User(Base, Manager):
     last_name = Column(String(150), nullable=True)
     date_joined = Column(DateTime(), nullable=False)
     is_active = Column(Boolean(), nullable=False, default=True)
-    profile = Column(ForeignKey("profiles.id", ondelete="SET NULL"), nullable=True)
+    trial_count = Column(Integer(), nullable=False, default=1)
 
     def __str__(self):
         return f"User: TG:{self.tg_id} ({self.username})"
@@ -63,8 +52,10 @@ class User(Base, Manager):
             return False
 
     @classmethod
-    async def create_if_not_exist(cls, tg_user: TGUser) -> "User":
-        if not await cls.exist(tg_user.id):
+    async def get_or_create(cls, tg_user: TGUser) -> "User":
+        try:
+            return await cls.get(tg_id=tg_user.id)
+        except cls.DoesNotExists:
             return await cls.create(
                 tg_id=tg_user.id,
                 username=tg_user.username,

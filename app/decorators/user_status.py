@@ -13,21 +13,18 @@ async def _answer_text(request: Message | CallbackQuery, text: str):
         await request.answer()
 
 
-def register_required(handler):
+def superuser_required(handler):
     @wraps(handler)
     async def wrapper(request: Message | CallbackQuery, *args, **kwargs):
         try:
             user = await User.get(tg_id=request.from_user.id)
         except User.DoesNotExists:
-            await _answer_text(request, "Начните с команды /start")
+            await _answer_text(request, "Нет доступа")
             return
         else:
-            if user.profile is not None:
+            if user.is_superuser:
                 await handler(request, *args, **kwargs)
             else:
-                await _answer_text(
-                    request,
-                    "Вам необходимо зарегистрироваться либо войти\nНачните с команды /start",
-                )
+                await _answer_text(request, "Нет доступа")
 
     return wrapper

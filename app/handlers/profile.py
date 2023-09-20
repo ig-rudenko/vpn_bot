@@ -5,12 +5,10 @@ from aiogram import F
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from ..decorators.user_status import register_required
 from ..service.utils import generate_qr_code
 from ..text import VPN_CONNECTION_ATTENTION
 from ..xray.generator import xray_connection_maker
-from ..helpers import get_user
-from ..models import VPNConnection
+from ..models import VPNConnection, User
 
 
 router = Router()
@@ -51,17 +49,16 @@ def get_connections_text_and_buttons_builder(
 
 
 @router.callback_query(F.data == "profile")
-@register_required
 async def profile(callback: types.CallbackQuery):
-    user = await get_user(callback.from_user.id)
+    user = await User.get_or_create(callback.from_user)
 
     text = (
         f"Добро пожаловать в профиль!\n"
-        f"Ваш username: {user.profile.username}\n"
-        f"Профиль был создан: {user.profile.date_joined.strftime('%d %B %Y %H:%M')}\n\n"
+        f"Ваш username: {user.username}\n"
+        f"Профиль был создан: {user.date_joined.strftime('%d %B %Y %H:%M')}\n\n"
     )
 
-    connection = await VPNConnection.filter(profile=user.profile.id)
+    connection = await VPNConnection.filter(tg_id=user.tg_id)
 
     go_back_button = types.InlineKeyboardButton(text="Назад", callback_data="start")
 
@@ -83,15 +80,14 @@ async def profile(callback: types.CallbackQuery):
 
 
 @router.callback_query(GetConnectionCallbackFactory.filter())
-@register_required
 async def get_config(
     callback: types.CallbackQuery,
     callback_data: GetConnectionCallbackFactory,
 ):
-    user = await get_user(callback.from_user.id)
+    user = await User.get_or_create(callback.from_user)
     try:
         conn: VPNConnection = await VPNConnection.get(
-            id=callback_data.conn_id, profile=user.profile.id
+            id=callback_data.conn_id, tg_id=user.tg_id
         )
     except VPNConnection.DoesNotExists:
         await callback.message.edit_text(

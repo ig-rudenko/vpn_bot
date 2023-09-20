@@ -21,7 +21,7 @@ async def check_url_availability(callback: types.CallbackQuery, state: FSMContex
 
 @router.message(CheckURLState.url)
 async def run_url_checker(message: types.Message, state: FSMContext):
-    url = message.text
+    url = message.text.lower()
     status: int = 0
     try:
         status = await CheckURLAvailability(url).get_status_code()
@@ -44,6 +44,6 @@ async def run_url_checker(message: types.Message, state: FSMContext):
     if status:
         text += f"\nСтатус: {status}"
     await message.answer(
-        text, reply_markup=await get_welcome_keyboard(message.from_user.id)
+        text, reply_markup=await get_welcome_keyboard(message.from_user)
     )
     await state.clear()

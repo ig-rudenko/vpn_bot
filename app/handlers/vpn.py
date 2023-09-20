@@ -4,10 +4,8 @@ from aiogram import Router, types
 from aiogram import F
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from ..decorators.user_status import register_required
 from ..service.utils import generate_qr_code
 from ..service.vpn import VPNConnectionService
-from ..helpers import get_user
 from ..models import User
 from .welcome import get_welcome_keyboard
 from ..text import VPN_CONNECTION_ATTENTION
@@ -16,8 +14,8 @@ router = Router()
 
 
 async def check_trial(user: User, callback: types.CallbackQuery) -> bool:
-    if user.profile.trial_count < 1:
-        keyboard = await get_welcome_keyboard(callback.from_user.id)
+    if user.trial_count < 1:
+        keyboard = await get_welcome_keyboard(callback.from_user)
         await callback.message.edit_text(
             "У вас закончились пробные подключения", reply_markup=keyboard
         )
@@ -27,7 +25,6 @@ async def check_trial(user: User, callback: types.CallbackQuery) -> bool:
 
 
 @router.callback_query(F.data == "tariff_selection")
-@register_required
 async def tariff_selection(callback: types.CallbackQuery):
     builder = InlineKeyboardBuilder()
     builder.row(
@@ -51,9 +48,8 @@ async def tariff_selection(callback: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "tariff_selection:trial:info")
-@register_required
 async def tariff_selection_trial_info(callback: types.CallbackQuery):
-    user = await get_user(callback.from_user.id)
+    user = await User.get_or_create(callback.from_user)
 
     if not await check_trial(user, callback):
         return
@@ -77,20 +73,19 @@ async def tariff_selection_trial_info(callback: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "tariff_selection:trial:get")
-@register_required
 async def tariff_selection_trial_get(callback: types.CallbackQuery):
-    user = await get_user(callback.from_user.id)
+    user = await User.get_or_create(callback.from_user)
 
     if not await check_trial(user, callback):
         return
 
     available_to = datetime.now() + timedelta(days=30)
     connection_str = await VPNConnectionService.create_new_connection(
-        profile=user.profile,
+        tg_id=user.tg_id,
         username=callback.from_user.username,
         available_to=available_to,
     )
-    await user.profile.update(trial_count=user.profile.trial_count - 1)
+    await user.update(trial_count=user.trial_count - 1)
 
     qr_code: bytes = generate_qr_code(connection_str)
     image = types.BufferedInputFile(qr_code, filename="connection.jpg")
@@ -101,7 +96,7 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
     )
     await callback.message.answer(
         VPN_CONNECTION_ATTENTION,
-        reply_markup=await get_welcome_keyboard(callback.from_user.id),
+        reply_markup=await get_welcome_keyboard(callback.from_user),
     )
     await callback.answer()
 
@@ -110,7 +105,6 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "tariff_selection:paid:info")
-@register_required
 async def tariff_selection_paid_info(callback: types.CallbackQuery):
     builder = InlineKeyboardBuilder()
     builder.row(

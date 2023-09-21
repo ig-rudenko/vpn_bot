@@ -82,7 +82,7 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
     available_to = datetime.now() + timedelta(days=30)
     connection_str = await VPNConnectionService.create_new_connection(
         tg_id=user.tg_id,
-        username=callback.from_user.username,
+        username=callback.from_user.username or callback.from_user.id,
         available_to=available_to,
     )
     await user.update(trial_count=user.trial_count - 1)

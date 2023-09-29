@@ -107,11 +107,9 @@ async def get_config(
 
         await callback.message.answer_photo(
             photo=image,
-            caption=f"Подключение \n\n<code>{conn_str}</code>",
+            text=f"Подключение \n\n<code>{conn_str}</code>\n{VPN_CONNECTION_ATTENTION}",
+            reply_markup=get_to_profile_keyboard(),
             parse_mode="HTML",
-        )
-        await callback.message.answer(
-            VPN_CONNECTION_ATTENTION, reply_markup=get_to_profile_keyboard()
         )
 
     await callback.answer()

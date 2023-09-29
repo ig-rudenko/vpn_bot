@@ -91,12 +91,9 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
     image = types.BufferedInputFile(qr_code, filename="connection.jpg")
     await callback.message.answer_photo(
         photo=image,
-        caption=f"Подключение было создано\n\n<code>{connection_str}</code>",
-        parse_mode="HTML",
-    )
-    await callback.message.answer(
-        VPN_CONNECTION_ATTENTION,
+        caption=f"Подключение было создано\n\n<code>{connection_str}</code>\n{VPN_CONNECTION_ATTENTION}",
         reply_markup=await get_welcome_keyboard(user),
+        parse_mode="HTML",
     )
     await callback.answer()
 

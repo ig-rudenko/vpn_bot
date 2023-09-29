@@ -18,8 +18,9 @@ async def clients_control(callback: types.CallbackQuery):
     for client in await VPNConnection.all():
         client: VPNConnection
         user_traffic = await xray_service.get_user_traffic(client.username)
+        username_string = client.username if client.username.isdigit() else f"@{client.username}"
         text += (
-            f"@{client.username} {'🟢' if client.is_active else '🔴'}\n"
+            f"{username_string} {'🟢' if client.is_active else '🔴'}\n"
             f"🔼 Загрузка↑ {format_bytes(user_traffic.uplink)}\n"
             f"🔽 Скачивание↓ {format_bytes(user_traffic.downlink)}\n"
             f"🔄 Всего: {format_bytes(user_traffic.uplink+user_traffic.downlink)}\n\n"

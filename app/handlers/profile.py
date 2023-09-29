@@ -33,13 +33,13 @@ def get_connections_text_and_buttons_builder(
 ) -> tuple[str, InlineKeyboardBuilder]:
     builder = InlineKeyboardBuilder()
     text = ""
-    for conn in connections:
+    for i, conn in enumerate(connections, 1):
         text += f"Подключение для @{conn.username}\n"
         if conn.is_active:
             text += f"❇️Доступно до: {conn.available_to.strftime('%d %B %Y %H:%M')}\n"
             builder.row(
                 types.InlineKeyboardButton(
-                    text=f"🔑 Получить конфиг {conn.id}",
+                    text=f"🔑 Получить конфиг {i}",
                     callback_data=GetConnectionCallbackFactory(conn_id=conn.id).pack(),
                 )
             )

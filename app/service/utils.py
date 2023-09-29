@@ -1,3 +1,4 @@
+import asyncio
 import io
 import random
 import re
@@ -43,14 +44,15 @@ class CheckURLAvailability:
         return url
 
     async def get_status_code(self) -> int:
-        print(self._validate_url(self._url))
         async with aiohttp.ClientSession(
             timeout=ClientTimeout(2.5),
             headers={"user-agent": random.choice(self.user_agents)},
         ) as client:
             async with client as session:
-                resp = await session.get(self._validate_url(self._url))
-                print(await resp.text())
+                try:
+                    resp = await session.get(self._validate_url(self._url))
+                except asyncio.TimeoutError:
+                    return 404
                 resp.close()
                 return resp.status
 

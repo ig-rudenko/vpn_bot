@@ -1,6 +1,6 @@
 import asyncio
 
-from app.handlers import welcome, utils, vpn, profile, install_info
+from app.handlers import welcome, utils, vpn, profile, install_info, deleter
 from app.admin_handlers import become, xray_control, server_control, clients_control
 from database.connection import db
 from settings import bot, dp
@@ -18,6 +18,7 @@ async def main():
         xray_control.router,
         server_control.router,
         clients_control.router,
+        deleter.router,
     )
 
     # ==== Init Database ====

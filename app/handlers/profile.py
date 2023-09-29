@@ -5,6 +5,7 @@ from aiogram import F
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from app.handlers.deleter import get_delete_back_button
 from app.service.utils import generate_qr_code, format_bytes
 from app.text import VPN_CONNECTION_ATTENTION
 from app.xray.generator import xray_connection_maker
@@ -22,7 +23,7 @@ class GetConnectionCallbackFactory(CallbackData, prefix="vpn_connection"):
 def get_to_profile_keyboard():
     return types.InlineKeyboardMarkup(
         inline_keyboard=[
-            [types.InlineKeyboardButton(text="Назад", callback_data="profile")]
+            [types.InlineKeyboardButton(text="🔙 Назад", callback_data="profile")]
         ]
     )
 
@@ -67,7 +68,7 @@ async def profile(callback: types.CallbackQuery):
 
     connection = await VPNConnection.filter(tg_id=user.tg_id)
 
-    go_back_button = types.InlineKeyboardButton(text="Назад", callback_data="start")
+    go_back_button = types.InlineKeyboardButton(text="🔙 Назад", callback_data="start")
 
     if not connection:
         await callback.message.edit_text(
@@ -105,10 +106,11 @@ async def get_config(
         qr_code: bytes = generate_qr_code(conn_str)
         image = types.BufferedInputFile(qr_code, filename="connection.jpg")
 
+        await callback.message.delete()
         await callback.message.answer_photo(
             photo=image,
-            text=f"Подключение \n\n<code>{conn_str}</code>\n{VPN_CONNECTION_ATTENTION}",
-            reply_markup=get_to_profile_keyboard(),
+            caption=f"Подключение \n\n<code>{conn_str}</code>\n\n{VPN_CONNECTION_ATTENTION}",
+            reply_markup=get_delete_back_button(),
             parse_mode="HTML",
         )
 

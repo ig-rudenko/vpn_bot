@@ -11,7 +11,7 @@ async def send_photos(
     system_type: Literal["android", "iphone", "windows"],
     photo_count: int = 3,
 ):
-    await message.answer_media_group(
+    return await message.answer_media_group(
         media=[
             types.InputMediaPhoto(
                 media=types.FSInputFile(f"media/guide/{system_type}/img_{i}.png")
@@ -25,7 +25,7 @@ def get_keyboard():
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
-            text="Назад",
+            text="🔙 Назад",
             callback_data="install:info",
         ),
     )
@@ -51,7 +51,7 @@ async def install_info(callback: types.CallbackQuery):
     )
     builder.row(
         types.InlineKeyboardButton(
-            text="Назад",
+            text="🔙 Назад",
             callback_data="start",
         ),
     )
@@ -79,7 +79,7 @@ async def install_info_android(callback: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "install:info:iphone")
-async def install_info_android(callback: types.CallbackQuery):
+async def install_info_iphone(callback: types.CallbackQuery):
     await callback.message.edit_text(
         text='📱 iPhone <a href="https://apps.apple.com/app/id6450534064">скачать</a>',
         reply_markup=get_keyboard(),
@@ -89,9 +89,9 @@ async def install_info_android(callback: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "install:info:windows")
-async def install_info_android(callback: types.CallbackQuery):
+async def install_info_windows(callback: types.CallbackQuery):
     await send_photos(callback.message, "windows", photo_count=7)
-    await callback.message.answer(
+    await callback.message.reply(
         text='💻 Windows <a href="https://github.com/InvisibleManVPN/InvisibleMan-XRayClient/releases">скачать</a>',
         reply_markup=get_keyboard(),
         parse_mode="HTML",

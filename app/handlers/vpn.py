@@ -4,6 +4,7 @@ from aiogram import Router, types
 from aiogram import F
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from .deleter import get_delete_back_button
 from ..service.utils import generate_qr_code
 from ..service.vpn import VPNConnectionService
 from ..models import User
@@ -36,6 +37,12 @@ async def tariff_selection(callback: types.CallbackQuery):
             text="Платная версия",
             callback_data="tariff_selection:paid:info",
         ),
+    )
+    builder.row(
+        types.InlineKeyboardButton(
+            text="🔙 Назад",
+            callback_data="start"
+        )
     )
     await callback.message.edit_text(
         "Выберите тариф для подключения",
@@ -89,10 +96,11 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
 
     qr_code: bytes = generate_qr_code(connection_str)
     image = types.BufferedInputFile(qr_code, filename="connection.jpg")
+    await callback.message.delete()
     await callback.message.answer_photo(
         photo=image,
-        caption=f"Подключение было создано\n\n<code>{connection_str}</code>\n{VPN_CONNECTION_ATTENTION}",
-        reply_markup=await get_welcome_keyboard(user),
+        caption=f"Подключение было создано\n\n<code>{connection_str}</code>\n\n{VPN_CONNECTION_ATTENTION}",
+        reply_markup=get_delete_back_button(),
         parse_mode="HTML",
     )
     await callback.answer()

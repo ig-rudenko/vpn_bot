@@ -12,7 +12,7 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
-            text="Профиль",
+            text="💀 Профиль",
             callback_data="profile",
         ),
         types.InlineKeyboardButton(
@@ -28,7 +28,7 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
         )
         builder.row(
             types.InlineKeyboardButton(
-                text="Управление клиентами", callback_data="clients_control"
+                text="💀💀💀 Управление клиентами", callback_data="clients_control"
             )
         )
 

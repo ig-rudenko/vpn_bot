@@ -31,7 +31,14 @@ class LastCall:
         return round(self.interval - (time.time() - self.get(user_id)))
 
 
-def rate_limit(interval: int):  # В секундах
+def rate_limit(interval: int):
+    """
+    Декоратор, ограничивающий вызов функции-обработчика на основе указанного интервала
+    для каждого пользователя свой счетчик.
+
+    :param interval: Интервал времени в секундах, в течение которого декорированная функция
+     может быть вызвана пользователем только один раз.
+    """
 
     last_call = LastCall(interval)
 

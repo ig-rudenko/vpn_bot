@@ -21,6 +21,9 @@ class _XRAYService:
         await self._run_command("systemctl restart xray.service")
 
     async def get_user_traffic(self, username: str) -> UserTraffic:
+        """
+        Извлекает трафик восходящей и нисходящей линии связи для конкретного пользователя с помощью API XRay.
+        """
         rc, stdout, stderr = await self._run_command(
             f"xray api statsquery --server=127.0.0.1:10085 -pattern '{username}' | jq .stat"
         )

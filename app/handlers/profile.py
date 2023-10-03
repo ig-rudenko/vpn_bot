@@ -5,9 +5,8 @@ from aiogram import F
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from app.handlers.deleter import get_delete_back_button
-from app.service.utils import generate_qr_code, format_bytes
-from app.text import VPN_CONNECTION_ATTENTION
+from app.service.shortcuts import answer_connection_config
+from app.service.utils import format_bytes
 from app.xray.generator import xray_connection_maker
 from app.xray.service import xray_service
 from app.models import VPNConnection, User
@@ -31,6 +30,13 @@ def get_to_profile_keyboard():
 def get_connections_text_and_buttons_builder(
     connections: Sequence[VPNConnection],
 ) -> tuple[str, InlineKeyboardBuilder]:
+    """
+    Принимает последовательность объектов VPNConnection и возвращает кортеж,
+    содержащий форматированную текстовую строку и объект InlineKeyboardBuilder.
+
+    :param connections: Последовательность объектов VPNConnection
+    :return: кортеж, содержащий два элемента: строку и объект InlineKeyboardBuilder.
+    """
     builder = InlineKeyboardBuilder()
     text = ""
     for i, conn in enumerate(connections, 1):
@@ -52,6 +58,9 @@ def get_connections_text_and_buttons_builder(
 
 @router.callback_query(F.data == "profile")
 async def profile(callback: types.CallbackQuery):
+    """
+    Извлекает информацию о пользователе и отображает ее вместе со статистикой трафика и VPN-подключений.
+    """
     user = await User.get_or_create(callback.from_user)
 
     user_traffic = await xray_service.get_user_traffic(user.username)
@@ -92,6 +101,10 @@ async def get_config(
     callback: types.CallbackQuery,
     callback_data: GetConnectionCallbackFactory,
 ):
+    """
+    Получает сведения о конфигурации VPN-соединения и отправляет их пользователю в виде сообщения.
+    """
+
     user = await User.get_or_create(callback.from_user)
     try:
         conn: VPNConnection = await VPNConnection.get(
@@ -103,15 +116,6 @@ async def get_config(
         )
     else:
         conn_str = xray_connection_maker.get_connection_string(conn.uuid, conn.username)
-        qr_code: bytes = generate_qr_code(conn_str)
-        image = types.BufferedInputFile(qr_code, filename="connection.jpg")
-
-        await callback.message.delete()
-        await callback.message.answer_photo(
-            photo=image,
-            caption=f"Подключение \n\n<code>{conn_str}</code>\n\n{VPN_CONNECTION_ATTENTION}",
-            reply_markup=get_delete_back_button(),
-            parse_mode="HTML",
-        )
+        await answer_connection_config(callback, conn_str)
 
     await callback.answer()

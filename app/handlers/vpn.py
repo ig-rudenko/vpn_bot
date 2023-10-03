@@ -4,17 +4,20 @@ from aiogram import Router, types
 from aiogram import F
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from .deleter import get_delete_back_button
-from ..service.utils import generate_qr_code
+from ..service.shortcuts import answer_connection_config
 from ..service.vpn import VPNConnectionService
 from ..models import User
 from .welcome import get_welcome_keyboard
-from ..text import VPN_CONNECTION_ATTENTION
 
 router = Router()
 
 
 async def check_trial(user: User, callback: types.CallbackQuery) -> bool:
+    """
+    Функция «check_trial» проверяет, есть ли у пользователя оставшиеся пробные подключения,
+    и возвращает «True», если они есть, в противном случае она отображает сообщение
+    в телеграм и возвращает «False».
+    """
     if user.trial_count < 1:
         keyboard = await get_welcome_keyboard(user)
         await callback.message.edit_text(
@@ -27,6 +30,9 @@ async def check_trial(user: User, callback: types.CallbackQuery) -> bool:
 
 @router.callback_query(F.data == "tariff_selection")
 async def tariff_selection(callback: types.CallbackQuery):
+    """
+    Отображает меню с опциями выбора тарифа и отправляет его пользователю в виде сообщения.
+    """
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
@@ -38,12 +44,7 @@ async def tariff_selection(callback: types.CallbackQuery):
             callback_data="tariff_selection:paid:info",
         ),
     )
-    builder.row(
-        types.InlineKeyboardButton(
-            text="🔙 Назад",
-            callback_data="start"
-        )
-    )
+    builder.row(types.InlineKeyboardButton(text="🔙 Назад", callback_data="start"))
     await callback.message.edit_text(
         "Выберите тариф для подключения",
         reply_markup=builder.as_markup(),
@@ -56,6 +57,11 @@ async def tariff_selection(callback: types.CallbackQuery):
 
 @router.callback_query(F.data == "tariff_selection:trial:info")
 async def tariff_selection_trial_info(callback: types.CallbackQuery):
+    """
+    Функция «tariff_selection_trial_info» отображает пользователю сообщение, информирующее его о том,
+    что он получит 30-дневную пробную версию VPN, и предоставляет возможность либо получить пробную версию,
+    либо вернуться в предыдущее меню.
+    """
     user = await User.get_or_create(callback.from_user)
 
     if not await check_trial(user, callback):
@@ -81,6 +87,10 @@ async def tariff_selection_trial_info(callback: types.CallbackQuery):
 
 @router.callback_query(F.data == "tariff_selection:trial:get")
 async def tariff_selection_trial_get(callback: types.CallbackQuery):
+    """
+    Проверяет, имеет ли пользователь право на пробную версию, создает новое
+    VPN-соединение и обновляет счетчик пробных версий пользователя.
+    """
     user = await User.get_or_create(callback.from_user)
 
     if not await check_trial(user, callback):
@@ -93,16 +103,7 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
         available_to=available_to,
     )
     await user.update(trial_count=user.trial_count - 1)
-
-    qr_code: bytes = generate_qr_code(connection_str)
-    image = types.BufferedInputFile(qr_code, filename="connection.jpg")
-    await callback.message.delete()
-    await callback.message.answer_photo(
-        photo=image,
-        caption=f"Подключение было создано\n\n<code>{connection_str}</code>\n\n{VPN_CONNECTION_ATTENTION}",
-        reply_markup=get_delete_back_button(),
-        parse_mode="HTML",
-    )
+    await answer_connection_config(callback, connection_str)
     await callback.answer()
 
 

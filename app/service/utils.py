@@ -58,6 +58,9 @@ class CheckURLAvailability:
 
 
 def generate_qr_code(data: str) -> bytes:
+    """
+    Принимает строку в качестве входных данных и возвращает соответствующее изображение QR-кода в виде байтов.
+    """
     qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_L)
     qr.add_data(data)
     image: Image = qr.make_image(
@@ -69,6 +72,10 @@ def generate_qr_code(data: str) -> bytes:
 
 
 def format_bytes(size: int) -> str:
+    """
+    Принимает размер в байтах и возвращает форматированное строковое представление размера в
+    соответствующих единицах измерения (KB, MB, GB и TB).
+    """
     power = 2**10
     n = 0
     power_labels = {0: "", 1: "K", 2: "M", 3: "G", 4: "T"}

@@ -18,6 +18,7 @@ class Config:
     def add_user(
         self, protocol: str, uuid: UUID, email: str, flow: str = "xtls-rprx-vision"
     ):
+        """Идемпотентное добавление пользователя в параметры конфигурации"""
         for inbound in self._config["inbounds"]:
             if inbound["protocol"] == protocol:
                 for client in inbound["settings"]["clients"]:
@@ -32,6 +33,7 @@ class Config:
                 )
 
     def delete_user(self, protocol: str, uuid: UUID):
+        """Удаление пользователя из конфигурации"""
         uuid_str = str(uuid)
         for inbound in self._config["inbounds"]:
             if inbound["protocol"] == protocol:
@@ -51,6 +53,7 @@ class ConfigReaderWriter:
 
     @property
     def config_data(self) -> str:
+        """Возвращает данные конфигурации в виде строки, декодируя ее при необходимости."""
         if self._config is None:
             return ""
         if isinstance(self._config, bytes):

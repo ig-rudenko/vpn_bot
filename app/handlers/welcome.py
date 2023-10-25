@@ -16,7 +16,7 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
             callback_data="profile",
         ),
         types.InlineKeyboardButton(
-            text="🔗 Выбрать подключение",
+            text="🔗 Получить настройки",
             callback_data="tariff_selection",
         ),
     )
@@ -31,16 +31,17 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
                 text="💀💀💀 Управление клиентами", callback_data="clients_control"
             )
         )
-
+    """
     builder.row(
         types.InlineKeyboardButton(
             text="🌐 Проверить доступность сайта",
             callback_data="utils:url_check",
         )
     )
+    """
     builder.row(
         types.InlineKeyboardButton(
-            text="ℹ️ Помощь в установке",
+            text="ℹ️ Приложения для подключения",
             callback_data="install:info",
         )
     )
@@ -60,3 +61,4 @@ async def callback_start(callback: types.CallbackQuery):
     keyboard = await get_welcome_keyboard(user)
     await callback.message.edit_text(WELCOME, reply_markup=keyboard)
     await callback.answer()
+

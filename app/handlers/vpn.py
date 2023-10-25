@@ -36,17 +36,23 @@ async def tariff_selection(callback: types.CallbackQuery):
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
-            text="Пробная версия",
-            callback_data="tariff_selection:trial:info",
+            text="Получить настройки",
+            # callback_data="tariff_selection:trial:info",
+            callback_data="tariff_selection:trial:get",
         ),
         types.InlineKeyboardButton(
-            text="Платная версия",
-            callback_data="tariff_selection:paid:info",
+            text="💀 Профиль",
+            callback_data="profile",
         ),
+        # types.InlineKeyboardButton(
+            # text="Платная версия",
+            # callback_data="tariff_selection:paid:info",
+        # ),
     )
     builder.row(types.InlineKeyboardButton(text="🔙 Назад", callback_data="start"))
     await callback.message.edit_text(
-        "Выберите тариф для подключения",
+        #"Выберите тариф для подключения",
+        "Нажмав \"🔗 Получить настройки\" Вы получите QR-code и ссылку, которая Вам необходима для настройки приложения на Вашем устройстве \n Для просмотра\получения существующих настроек смотрите \n раздел \"💀 Профиль\"",
         reply_markup=builder.as_markup(),
     )
     await callback.answer()
@@ -105,6 +111,10 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
     await user.update(trial_count=user.trial_count - 1)
     await answer_connection_config(callback, connection_str)
     await callback.answer()
+    await message.answer(
+        "Скопируйте, нажав на сообщение, полученные данные и используйте их при настройке приложения на Вашем устройстве. \n Подробнее в разделе \"ℹ️ Приложения для подключения\"",
+        reply_markup=builder.as_markup(),
+    )
 
 
 # ======================= ПЛАТНЫЕ ============================

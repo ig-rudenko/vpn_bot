@@ -20,7 +20,7 @@ async def clients_control(callback: types.CallbackQuery):
         user_traffic = await xray_service.get_user_traffic(client.username)
         username_string = client.username if client.username.isdigit() else f"@{client.username}"
         text += (
-            f"{'{0:<15}'.format(username_string)} {'🟢' if client.is_active else '🔴'}"
+            f"{'{0:<40}'.format(username_string)} {'🟢 ' if client.is_active else '🔴 '} {client.created_datetime}\n "
             f"↑ {format_bytes(user_traffic.uplink)} "
             f"↓ {format_bytes(user_traffic.downlink)} \n"
             # f"🔄 Всего: {format_bytes(user_traffic.uplink+user_traffic.downlink)}\n\n"

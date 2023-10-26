@@ -30,5 +30,5 @@ async def clients_control(callback: types.CallbackQuery):
         user_count +=1
     text += (f" Всего пользователей: {user_count} ```")
     await callback.message.edit_text(
-        text, reply_markup=await get_welcome_keyboard(user=user)
+        text, reply_markup=await get_welcome_keyboard(user=user), parse_mode='markdownv2'
     )

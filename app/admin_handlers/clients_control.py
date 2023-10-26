@@ -19,14 +19,15 @@ async def clients_control(callback: types.CallbackQuery):
         client: VPNConnection
         user_traffic = await xray_service.get_user_traffic(client.username)
         username_string = client.username if client.username.isdigit() else f"@{client.username}"
+        text += "```"
         text += (
-            f"{'{0:<40}'.format(username_string)} {'🟢 ' if client.is_active else '🔴 '} {client.created_datetime}\n "
+            f"{'+' if client.is_active else '-'} {username_string} {client.created_datetime.strftime('%m/%d/%Y')}"
             f"↑ {format_bytes(user_traffic.uplink)} "
             f"↓ {format_bytes(user_traffic.downlink)} \n"
             # f"🔄 Всего: {format_bytes(user_traffic.uplink+user_traffic.downlink)}\n\n"
         )
         user_count +=1
-    text += (f" Всего пользователей: {user_count}")
+    text += (f" Всего пользователей: {user_count} ```")
     await callback.message.edit_text(
         text, reply_markup=await get_welcome_keyboard(user=user)
     )

@@ -43,6 +43,10 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
         types.InlineKeyboardButton(
             text="ℹ️ Как подключаться",
             callback_data="install:info",
+        ),
+        types.InlineKeyboardButton(
+            text='🎁 Поделиться',
+            switch_inline_query='Я подключил себе PROXY\VPN 👍 и хочу порекомендовать его Вам 🤝'
         )
     )
     return builder.as_markup()

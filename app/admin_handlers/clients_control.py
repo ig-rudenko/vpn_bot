@@ -6,8 +6,6 @@ from app.models import VPNConnection, User
 from app.service.utils import format_bytes
 from app.xray.service import xray_service
 
-from datetime import datetime
-
 router = Router()
 
 
@@ -22,10 +20,9 @@ async def clients_control(callback: types.CallbackQuery):
         user_traffic = await xray_service.get_user_traffic(client.username)
         username_string = client.username if client.username.isdigit() else f"@{client.username}"
         text += (
-            f"{username_string} {'🟢' if client.is_active else '🔴'} "
-            # {datetime.strptime(client.created_datetime, '%d/%m/%Y')}|{datetime.strptime(client.available_to, '%d/%m/%Y')} \n"
-            f"🔼{format_bytes(user_traffic.uplink)} "
-            f"🔽{format_bytes(user_traffic.downlink)} \n"
+            f"{'{0:<15}'.format(username_string)} {'🟢' if client.is_active else '🔴'}"
+            f"↑ {format_bytes(user_traffic.uplink)} "
+            f"↓ {format_bytes(user_traffic.downlink)} \n"
             # f"🔄 Всего: {format_bytes(user_traffic.uplink+user_traffic.downlink)}\n\n"
         )
         user_count +=1

@@ -12,7 +12,7 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
-            text="Ваш статус",
+            text="🚦 Ваш статус",
             callback_data="profile",
         ),
         types.InlineKeyboardButton(

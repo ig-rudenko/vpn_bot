@@ -23,8 +23,8 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
 
     if user.is_superuser:
         builder.row(
-            types.InlineKeyboardButton(text="XRAY", callback_data="xray"),
-            types.InlineKeyboardButton(text="Сервер", callback_data="server"),
+            types.InlineKeyboardButton(text="📊 XRAY", callback_data="xray"),
+            types.InlineKeyboardButton(text="📋 Сервер", callback_data="server"),
         )
         builder.row(
             types.InlineKeyboardButton(

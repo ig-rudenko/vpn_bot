@@ -12,11 +12,11 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(
-            text="💀 Профиль",
+            text="Ваш статус",
             callback_data="profile",
         ),
         types.InlineKeyboardButton(
-            text="🔗 Получить настройки",
+            text="🔗 Получить доступ",
             callback_data="tariff_selection",
         ),
     )
@@ -41,7 +41,7 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
     """
     builder.row(
         types.InlineKeyboardButton(
-            text="ℹ️ Приложения для подключения",
+            text="ℹ️ Как подключаться",
             callback_data="install:info",
         )
     )

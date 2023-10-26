@@ -15,7 +15,7 @@ async def clients_control(callback: types.CallbackQuery):
     user = await User.get(tg_id=callback.from_user.id)
     text = "Подключения пользователей\n\n"
     user_count = 0
-    text += "``` "
+    text += "```"
     for client in await VPNConnection.all():
         client: VPNConnection
         user_traffic = await xray_service.get_user_traffic(client.username)

@@ -56,7 +56,7 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
 async def cmd_start(message: types.Message):
     user = await User.get_or_create(tg_user=message.from_user)
     keyboard = await get_welcome_keyboard(user)
-    await message.answer(WELCOME, reply_markup=keyboard, parse_mode="markdownv2")
+    await message.answer(WELCOME, reply_markup=keyboard, parse_mode="html")
 
 
 @router.callback_query(F.data == "start")

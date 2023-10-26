@@ -16,7 +16,7 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
             callback_data="profile",
         ),
         types.InlineKeyboardButton(
-            text="🔗 Получить доступ",
+            text="🔑 Получить доступ",
             callback_data="tariff_selection",
         ),
     )

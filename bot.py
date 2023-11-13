@@ -1,7 +1,8 @@
 import asyncio
 
-from app.handlers import welcome, utils, vpn, profile, install_info, deleter
 from app.admin_handlers import become, xray_control, server_control, clients_control
+from app.handlers import welcome, utils, vpn, profile, install_info, deleter
+from app.middleware import LoggingMiddleware
 from database.connection import db
 from settings import bot, dp
 
@@ -20,6 +21,10 @@ async def main():
         clients_control.router,
         deleter.router,
     )
+
+    # ==== Middleware ====
+    dp.message.middleware(LoggingMiddleware())
+    dp.callback_query.middleware(LoggingMiddleware())
 
     # ==== Init Database ====
     db.init("sqlite+aiosqlite:///db.sqlite3")

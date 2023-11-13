@@ -111,10 +111,6 @@ async def tariff_selection_trial_get(callback: types.CallbackQuery):
     await user.update(trial_count=user.trial_count - 1)
     await answer_connection_config(callback, connection_str)
     await callback.answer()
-    await message.answer(
-        "Скопируйте, нажав на сообщение, полученные данные и используйте их при настройке приложения на Вашем устройстве. \n Подробнее в разделе \"ℹ️ Приложения для подключения\"",
-        reply_markup=builder.as_markup(),
-    )
 
 
 # ======================= ПЛАТНЫЕ ============================

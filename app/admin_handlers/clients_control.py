@@ -32,3 +32,21 @@ async def clients_control(callback: types.CallbackQuery):
     await callback.message.edit_text(
         text, reply_markup=await get_welcome_keyboard(user=user), parse_mode='markdownv2'
     )
+
+
+@router.callback_query(F.data == "clients_lead")
+@superuser_required
+async def clients_control(callback: types.CallbackQuery):
+    user = await User.get(tg_id=callback.from_user.id)
+    text = "Пользователи не получившие доступ\n\n"
+    user_count = 0
+    text += "```"
+    client_usernames = VPNConnection.username
+    for users in await User.all():
+        if users.username not in client_usernames:
+            text += f' {users.username} {users.date_joined}'
+            user_count +=1
+    text += (f" Всего пользователей: {user_count} ```")
+    await callback.message.edit_text(
+        text, reply_markup=await get_welcome_keyboard(user=user), parse_mode='markdownv2'
+    )

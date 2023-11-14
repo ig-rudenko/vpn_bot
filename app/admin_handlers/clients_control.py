@@ -49,7 +49,7 @@ async def clients_lead(callback: types.CallbackQuery):
 
     for users in await User.all():
         if users.username not in  clients_list:
-            text += f' {users.username} {users.date_joined} \n'
+            text += f' {users.username} {users.date_joined.strftime('%m/%d/%Y')} \n'
             user_count +=1
     text += (f" Всего пользователей: {user_count} ```")
     await callback.message.edit_text(

@@ -19,6 +19,7 @@ async def main():
         xray_control.router,
         server_control.router,
         clients_control.router,
+        clients_lead.router,
         deleter.router,
     )
 

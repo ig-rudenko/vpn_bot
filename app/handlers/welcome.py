@@ -28,7 +28,10 @@ async def get_welcome_keyboard(user: User) -> types.InlineKeyboardMarkup:
         )
         builder.row(
             types.InlineKeyboardButton(
-                text="⚙️ Управление клиентами", callback_data="clients_control"
+                text="⚙️ Клиенты", callback_data="clients_control"
+            ),
+            types.InlineKeyboardButton(
+                text="⚙️ Неклиенты", callback_data="clients_lead"
             )
         )
     """
@@ -63,6 +66,6 @@ async def cmd_start(message: types.Message):
 async def callback_start(callback: types.CallbackQuery):
     user = await User.get_or_create(tg_user=callback.from_user)
     keyboard = await get_welcome_keyboard(user)
-    await callback.message.edit_text(WELCOME, reply_markup=keyboard)
+    await callback.message.edit_text(WELCOME, reply_markup=keyboard, parse_mode="html")
     await callback.answer()
 

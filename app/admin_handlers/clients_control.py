@@ -43,9 +43,10 @@ async def clients_lead(callback: types.CallbackQuery):
     text += "```"
     # client_usernames = VPNConnection.username
     for users in await User.all():
-        if users.username not in VPNConnection.username.all_():
-            text += f' {users.username} {users.date_joined}'
-            user_count +=1
+        for clients in VPNConnection.all():
+            if users.username != clients.username:
+                text += f' {users.username} {users.date_joined}'
+                user_count +=1
     text += (f" Всего пользователей: {user_count} ```")
     await callback.message.edit_text(
         text, reply_markup=await get_welcome_keyboard(user=user), parse_mode='markdownv2'

@@ -40,7 +40,7 @@ async def clients_lead(callback: types.CallbackQuery):
     user = await User.get(tg_id=callback.from_user.id)
     text = "Пользователи не получившие доступ\n\n"
     user_count = 0
-    text += "```"
+    text += ""
     clients_list = []
     for clients in await VPNConnection.all():
         clients_list.append(clients.username)
@@ -49,9 +49,9 @@ async def clients_lead(callback: types.CallbackQuery):
 
     for users in await User.all():
         if users.username not in  clients_list:
-            text += f' {users.username} {users.date_joined.strftime('%m/%d/%Y')} \n'
+            text += f' @{users.username} {users.date_joined.strftime('%m/%d/%Y')} \n'
             user_count +=1
-    text += (f" Всего пользователей: {user_count} ```")
+    text += (f" Всего пользователей: {user_count} ")
     await callback.message.edit_text(
-        text, reply_markup=await get_welcome_keyboard(user=user), parse_mode='markdownv2'
+        text, reply_markup=await get_welcome_keyboard(user=user), parse_mode='html'
     )

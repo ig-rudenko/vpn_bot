@@ -36,7 +36,7 @@ async def clients_control(callback: types.CallbackQuery):
 
 @router.callback_query(F.data == "clients_lead")
 @superuser_required
-async def clients_control(callback: types.CallbackQuery):
+async def clients_lead(callback: types.CallbackQuery):
     user = await User.get(tg_id=callback.from_user.id)
     text = "Пользователи не получившие доступ\n\n"
     user_count = 0

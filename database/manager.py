@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar, Sequence
+from typing import Sequence, Self
 
 from sqlalchemy import select, update as sqlalchemy_update
 from sqlalchemy.exc import NoResultFound
@@ -7,15 +7,12 @@ from sqlalchemy.orm import selectinload, load_only
 from .connection import db
 
 
-T = TypeVar("T")
-
-
-class Manager(Generic[T]):
+class Manager:
     class DoesNotExists(Exception):
         pass
 
     @classmethod
-    async def get(cls, select_in_load: str | None = None, **kwargs) -> T:
+    async def get(cls, select_in_load: str | None = None, **kwargs) -> Self:
         """
         # Возвращает одну запись, которая удовлетворяет введенным параметрам.
 
@@ -39,7 +36,7 @@ class Manager(Generic[T]):
             raise cls.DoesNotExists
 
     @classmethod
-    async def create(cls, **kwargs) -> T:
+    async def create(cls, **kwargs) -> Self:
         obj = cls(**kwargs)
         async with db.session() as session:
             session.add(obj)
@@ -62,7 +59,7 @@ class Manager(Generic[T]):
     @classmethod
     async def all(
         cls, select_in_load: str = None, values: list[str] = None
-    ) -> Sequence[T]:
+    ) -> Sequence[Self]:
         """
         # Получает все записи.
 
@@ -86,7 +83,9 @@ class Manager(Generic[T]):
             return result.scalars().all()
 
     @classmethod
-    async def filter(cls, select_in_load: str | None = None, **kwargs) -> Sequence[T]:
+    async def filter(
+        cls, select_in_load: str | None = None, **kwargs
+    ) -> Sequence[Self]:
         """
         # Возвращает все записи, которые удовлетворяют фильтру.
 

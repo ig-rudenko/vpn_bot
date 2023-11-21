@@ -1,16 +1,15 @@
 from typing import Sequence
 
-from aiogram import Router, types
 from aiogram import F
+from aiogram import Router, types
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from app.models import VPNConnection, User
 from app.service.shortcuts import answer_connection_config
 from app.service.utils import format_bytes
 from app.xray.generator import xray_connection_maker
 from app.xray.service import xray_service
-from app.models import VPNConnection, User
-
 
 router = Router()
 

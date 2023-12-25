@@ -22,7 +22,7 @@ async def clients_control(callback: types.CallbackQuery):
         username_string = client.username if client.username.isdigit() else f"@{client.username}"
 
         text += (
-            f"{'+' if client.is_active else '-'} {username_string[:13]:<15} {client.created_datetime.strftime('%m/%d/%Y')}"
+            f"{'+' if client.is_active else '-'} {username_string[:13]:<15} {client.created_datetime.strftime('%m/%d/%Y')}\n"
             # f"↑ {format_bytes(user_traffic.uplink)} "
             # f"↓ {format_bytes(user_traffic.downlink)} \n"#
             # f"🔄 Всего: {format_bytes(user_traffic.uplink+user_traffic.downlink)}\n\n"

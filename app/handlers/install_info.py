@@ -71,7 +71,7 @@ async def install_info_android(callback: types.CallbackQuery):
         " Вы можете скопировать текст подключения и вставить его через буфер обмена,"
         " либо отсканировать QR код. "
         "Также можно сохранить изображение QR кода и выбрать его затем в приложении.\n\n"
-        '📱 Для android <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang&hl=ru">скачать</a>',
+        '📱 Для android <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android">скачать</a>',
         reply_markup=get_keyboard(),
         parse_mode="HTML",
     )

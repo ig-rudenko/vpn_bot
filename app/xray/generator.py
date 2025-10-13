@@ -7,10 +7,10 @@ class XRAYConnectionMaker:
         self._server_ip = os.getenv("XRAY_SERVER_IP")
         self._public_key = os.getenv("XRAY_PUBLIC_KEY")
         self._type = "tcp"
-        self._port = 443
-        self._sni = "www.microsoft.com"
+        self._port = int(os.getenv("XRAY_PORT", 443))
+        self._sni = os.getenv("XRAY_SNI", "yahoo.com")
         self._sid = os.getenv("XRAY_SHORT_ID")  # short id
-        self._flow = "xtls-rprx-vision"
+        self._flow = os.getenv("XRAY_FLOW", "xtls-rprx-vision")  # flow
 
     def get_connection_string(self, uuid: UUID, username: str) -> str:
         return (

@@ -9,7 +9,7 @@ from database.connection import db
 app = web.Application()
 
 BOT_TOKEN = os.getenv("TG_TOKEN")
-ADMIN_IDS = [int(x) for x in os.getenv("ADMIN_IDS", "").split(",")]
+ADMIN_IDS = [int(x) for x in os.getenv("ADMIN_IDS", "").split(",") if x]
 
 db.init("sqlite+aiosqlite:///db.sqlite3")
 

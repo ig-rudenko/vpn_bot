@@ -27,7 +27,7 @@ class _XRAYService:
         rc, stdout, stderr = await self._run_command(
             f"xray api statsquery --server=127.0.0.1:10085 -pattern '{username}' | jq .stat"
         )
-        raw_data = json.loads(stdout or "[]")
+        raw_data = json.loads(stdout or "[]") or []
         traffic = UserTraffic()
         for part in raw_data:
             if part["name"].endswith("uplink"):
